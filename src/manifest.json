@@ -1,0 +1,29 @@
+{
+  "name": "new-tab-page",
+  "description": "A Vue.js web extension",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "icons": {
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
+  },
+  "browser_action": {
+    "default_title": "new-tab-page",
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "chrome_url_overrides": {
+    "newtab": "tab/tab.html"
+  },
+  "oauth2": {
+    "client_id": "761376220710-p7pm1sg891hvpukb18rlp9rg774j3njl.apps.googleusercontent.com",
+    "scopes":["https://www.googleapis.com/auth/spreadsheets.readonly"]
+  },
+  "permissions": [
+    "identity"
+  ]
+}
