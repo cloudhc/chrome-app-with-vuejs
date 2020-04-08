@@ -6,21 +6,115 @@
     <div v-else>
       <p class="joke">{{ joke }}</p>
     </div>
-    <table id="list">
-      <thead>
-        <tr>
-          <th v-for="c in contacts[0]">{{ c }}</th>
-        </tr>
-      </thead>
-      <tbody id="trip">
-        <tr v-for="(dataes, index) in contacts" v-if="index != 0">
-          <td v-for="(e, idx) in dataes">
-            <span v-if="e >= 10 && idx != 0" style="color:red">{{ e }}</span>
-            <span v-else>{{ e }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="d-table">
+      <div class="d-row">
+        <div class='left-box'>
+          <table id="trips">
+            <thead>
+              <tr>
+                <th v-for="c in trips[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in trips" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">
+                  <span v-if="e >= 10 && idx != 0" style="color:red">{{ e }}</span>
+                  <span v-else>{{ e }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='right-box'>
+          <table id="movies">
+            <thead>
+              <tr>
+                <th v-for="c in movies[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in movies" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="d-table">
+      <div class="d-row">
+        <div class='center-box'>
+          <table id="videos">
+            <thead>
+              <tr>
+                <th v-for="c in videos[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in videos" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='center-box'>
+          <table id="books">
+            <thead>
+              <tr>
+                <th v-for="c in books[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in books" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='center-box'>
+          <table id="concerts">
+            <thead>
+              <tr>
+                <th v-for="c in concerts[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in concerts" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='center-box'>
+          <table id="lectures">
+            <thead>
+              <tr>
+                <th v-for="c in lectures[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in lectures" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='center-box'>
+          <table id="travels">
+            <thead>
+              <tr>
+                <th v-for="c in travels[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in travels" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -32,7 +126,13 @@ export default {
     return {
       loading: true,
       joke: "",
-      contacts: [[1,2,3,4]]
+      trips: [],
+      movies: [],
+      videos: [],
+      books: [],
+      concerts: [],
+      lectures: [],
+      travels: []
     }
   },
   created() {
@@ -40,9 +140,31 @@ export default {
     chrome.identity.getAuthToken({interactive: true}, function(token) {
       axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=stats!M1:W13", { 'headers': { 'Authorization': 'Bearer ' + token }}
       ).then(res => {
-        console.log(vm.contacts);
-        vm.contacts = res.data.valueRanges[0].values;
-        console.log(vm.contacts);
+        vm.trips = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!L1:Q11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.movies = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!A1:B11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.videos = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!C1:D11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.books = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!E1:F11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.concerts = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!G1:H11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.lectures = res.data.valueRanges[0].values;
+      });
+      axios.get("https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=totals!I1:J11", { 'headers': { 'Authorization': 'Bearer ' + token }}
+      ).then(res => {
+        vm.travels = res.data.valueRanges[0].values;
       });
     });
   },
@@ -82,12 +204,12 @@ table {
     background: #f5f5f5;
     border-collapse: separate;
     box-shadow: inset 0 1px 0 #fff;
-    font-size: medium;
-    line-height: 24px;
+    font-size: 9px;
+    line-height: 3px;
     font-family: "Hanna", Jeju Gothic, Nanum Gothic, Serif;
-    margin: 30px auto;
+    margin: 2px auto;
     text-align: center;
-    width: 800px;
+    width: 100%;
 }
 
 th {
@@ -99,7 +221,7 @@ th {
     box-shadow: inset 0 1px 0 #999;
     color: #fff;
     font-weight: bold;
-    padding: 10px 15px;
+    padding: 5px 5px;
     position: relative;
     text-shadow: 0 1px 0 #000;
 }
@@ -108,11 +230,11 @@ th:after {
     background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.08));
     content: '';
     display: block;
-    height: 25%;
+    height: 5%;
     left: 0;
     margin: 1px 0 0 0;
     position: absolute;
-    top: 25%;
+    top: 15%;
     width: 100%;
 }
 
@@ -131,7 +253,7 @@ td {
     border-top: 1px solid #fff;
     border-bottom: 1px solid #e8e8e8;
     font-weight: bold;
-    padding: 10px 15px;
+    padding: 5px 5px;
     position: relative;
     transition: all 300ms;
 }
@@ -173,6 +295,31 @@ tbody:hover td {
 tbody:hover tr:hover td {
     color: #444;
     text-shadow: 0 1px 0 #fff;
+}
+
+.left-box {
+  float: left;
+  width: 70%;
+}
+
+.right-box {
+  float: right;
+  width: 30%;
+}
+
+.d-table{
+  display: table;
+  width: 100%;
+}
+
+.d-row{
+  display: table-row;
+}
+
+.center-box {
+  float: center;
+  display: table-cell;
+  width: 20%;
 }
 
 .joke {
