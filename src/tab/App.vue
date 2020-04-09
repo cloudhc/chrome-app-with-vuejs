@@ -117,6 +117,20 @@
             </tbody>
           </table>
         </div>
+        <div class='center-box'>
+          <table id="regions">
+            <thead>
+              <tr>
+                <th v-for="c in regions[0]">{{ c }}</th>
+              </tr>
+            </thead>
+            <tbody id="list">
+              <tr v-for="(dataes, index) in regions" v-if="index != 0">
+                <td v-for="(e, idx) in dataes">{{ e }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -136,33 +150,43 @@ export default {
       books: [],
       concerts: [],
       lectures: [],
-      travels: []
+      travels: [],
+      regions: []
     }
   },
   created() {
     let vm = this;
     chrome.identity.getAuthToken({interactive: true}, function(token) {
-      let ranges = ['stats!M1:W13', 'totals!L1:Q11', 'totals!A1:B11', 'totals!C1:D11', 'totals!E1:F11', 'totals!G1:H11', 'totals!I1:J11'];
+      let ranges = [['매년월별', 'stats!M1:W13'],
+                    ['관광지별', 'stats!G1:H16'],
+                    ['주요활동', 'totals!L1:Q11'],
+                    ['영화', 'totals!A1:B11'],
+                    ['독서', 'totals!C1:D11'],
+                    ['공영', 'totals!E1:F11'],
+                    ['강연', 'totals!G1:H11'],
+                    ['여행', 'totals!I1:J11']];
 
       ranges.forEach((value, index, array) => {
-        axios.get(`https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=${value}`, { 'headers': { 'Authorization': 'Bearer ' + token }}
+        axios.get(`https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=${value[1]}`, { 'headers': { 'Authorization': 'Bearer ' + token }}
         ).then(res => {
           if (index == 0) {
             vm.trips = res.data.valueRanges[0].values;
           } else if (index == 1) {
-            vm.totals = res.data.valueRanges[0].values;
+            vm.regions = res.data.valueRanges[0].values;
           } else if (index == 2) {
-            vm.movies = res.data.valueRanges[0].values;
+            vm.totals = res.data.valueRanges[0].values;
           } else if (index == 3) {
-            vm.books = res.data.valueRanges[0].values;
+            vm.movies = res.data.valueRanges[0].values;
           } else if (index == 4) {
-            vm.concerts = res.data.valueRanges[0].values;
+            vm.books = res.data.valueRanges[0].values;
           } else if (index == 5) {
-            vm.lectures = res.data.valueRanges[0].values;
+            vm.concerts = res.data.valueRanges[0].values;
           } else if (index == 6) {
+            vm.lectures = res.data.valueRanges[0].values;
+          } else if (index == 7) {
             vm.travels = res.data.valueRanges[0].values;
           } else {
-              alert("invalid index");
+            alert("invalid index");
           }
         });
       });
@@ -205,7 +229,7 @@ table {
     border-collapse: separate;
     box-shadow: inset 0 1px 0 #fff;
     font-size: small;
-    line-height: 10px;
+    line-height: 9px;
     font-family: "Hanna", Jeju Gothic, Nanum Gothic, Serif;
     margin: 2px auto;
     text-align: center;
@@ -320,7 +344,7 @@ tbody:hover tr:hover td {
 .center-box {
   float: center;
   display: table-cell;
-  width: 20%;
+  width: 16.6%;
 }
 
 .joke {
