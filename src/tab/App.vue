@@ -133,13 +133,26 @@
         </div>
       </div>
     </div>
+    <div class="d-table">
+      <div class="d-row">
+        <canvas id="doughnutRegionsChart" height="450" width="800"></canvas>
+        <canvas id="lineTripsChart" height="450" width="800"></canvas>
+        <canvas id="lineTotalsChart" height="450" width="800"></canvas>
+        <chartjs-line :labels="labels" :data="dataset" :bind="true"></chartjs-line>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 
+var globalRegionsChart;
+var globalTripsChart;
+var globalTotalsChart;
+
 export default {
+  name: 'VueCharts',
   data () {
     return {
       loading: true,
@@ -151,32 +164,313 @@ export default {
       concerts: [],
       lectures: [],
       travels: [],
-      regions: []
+      regions: [],
+      dataentry: [],
+      datalabel: [],
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      dataset: [65, 59, 80, 81, 56, 55, 40],
+      totalsChartData: {
+        type: 'line',
+        data: {
+          labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          datasets: [
+            {
+              label: "movies",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "books",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "concerts",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "lectures",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "travels",
+              fillColor: "rgba(151,187,205,0.2)",
+              strokeColor: "rgba(151,187,205,1)",
+              pointColor: "rgba(151,187,205,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(151,187,205,1)",
+              data: [1, 2, 3, 6, 10, 17, 5, 10, 3, 1]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          lineTension: 1,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                padding: 25,
+              }
+            }]
+          }
+        }
+      },
+      tripsChartData: {
+        type: 'line',
+        data: {
+          labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          datasets: [
+            {
+              label: "2010",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2011",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2012",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2013",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2014",
+              fillColor: "rgba(151,187,205,0.2)",
+              strokeColor: "rgba(151,187,205,1)",
+              pointColor: "rgba(151,187,205,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(151,187,205,1)",
+              data: [1, 2, 3, 6, 10, 17, 5, 10, 3, 1]
+            },
+            {
+              label: "2015",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2016",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2017",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2018",
+              fillColor: "rgba(220,220,220,0.2)",
+              strokeColor: "rgba(220,220,220,1)",
+              pointColor: "rgba(220,220,220,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(220,220,220,1)",
+              data: [0, 0, 1, 3, 5, 7, 13, 19, 23, 31]
+            },
+            {
+              label: "2019",
+              fillColor: "rgba(151,187,205,0.2)",
+              strokeColor: "rgba(151,187,205,1)",
+              pointColor: "rgba(151,187,205,1)",
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: "rgba(151,187,205,1)",
+              data: [1, 2, 3, 6, 10, 17, 5, 10, 3, 1]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          lineTension: 1,
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                padding: 25,
+              }
+            }]
+          }
+        }
+      },
+      regionsChartData : {
+        type: 'doughnut',
+        data: {
+          labels: ['OK', 'WARNING', 'CRITICAL', 'UNKNOWN'],
+          datasets: [{
+            label: '# of Tomatoes',
+            data: [12, 19, 3, 5],
+            backgroundColor: [
+              'rgba(0, 0, 0, 0.7)',
+              'rgba(0, 0, 128, 0.7)',
+              'rgba(0, 0, 255, 0.7)',
+              'rgba(0, 128, 0, 0.7)',
+              'rgba(0, 128, 128, 0.7)',
+              'rgba(0, 255, 0, 0.7)',
+              'rgba(0, 255, 128, 0.7)',
+              'rgba(0, 255, 255, 0.7)',
+              'rgba(128, 0, 0, 0.7)',
+              'rgba(128, 0, 128, 0.7)',
+              'rgba(128, 128, 0, 0.7)',
+              'rgba(128, 128, 128, 0.7)',
+              'rgba(192, 128, 192, 0.7)',
+              'rgba(255, 0, 0, 0.7)',
+              'rgba(255, 0, 255, 0.7)',
+              'rgba(255, 255, 0, 0.7)',
+              'rgba(255, 255, 255, 0.7)'
+            ],
+            borderColor: [
+              'rgba(0, 0, 0, 1)',
+              'rgba(0, 0, 128, 1)',
+              'rgba(0, 0, 255, 1)',
+              'rgba(0, 128, 0, 1)',
+              'rgba(0, 128, 128, 1)',
+              'rgba(0, 255, 0, 1)',
+              'rgba(0, 255, 128, 1)',
+              'rgba(0, 255, 255, 1)',
+              'rgba(128, 0, 0, 1)',
+              'rgba(128, 0, 128, 1)',
+              'rgba(128, 128, 0, 1)',
+              'rgba(128, 128, 128, 1)',
+              'rgba(192, 192, 192, 1)',
+              'rgba(255, 0, 0, 1)',
+              'rgba(255, 0, 255, 1)',
+              'rgba(255, 255, 0, 1)',
+              'rgba(255, 255, 255, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          cutoutPercentage: 40,
+          responsive: true,
+          rotation: 1 * Math.PI,
+          circumference: 1 * Math.PI
+        }
+      }
     }
   },
   created() {
     let vm = this;
+
     chrome.identity.getAuthToken({interactive: true}, function(token) {
-      let ranges = [['매년월별', 'stats!M1:W13'],
-                    ['관광지별', 'stats!G1:H16'],
-                    ['주요활동', 'totals!L1:Q11'],
-                    ['영화', 'totals!A1:B11'],
-                    ['독서', 'totals!C1:D11'],
-                    ['공영', 'totals!E1:F11'],
-                    ['강연', 'totals!G1:H11'],
-                    ['여행', 'totals!I1:J11']];
+      let ranges = [['매년월별', 'stats!M1:W14'],
+                    ['관광지별', 'stats!G1:H17'],
+                    ['주요활동', 'totals!L1:Q12'],
+                    ['영화', 'totals!A1:B12'],
+                    ['독서', 'totals!C1:D12'],
+                    ['공영', 'totals!E1:F12'],
+                    ['강연', 'totals!G1:H12'],
+                    ['여행', 'totals!I1:J12']];
 
       ranges.forEach((value, index, array) => {
         axios.get(`https://sheets.googleapis.com/v4/spreadsheets/1n3uci3ucTqJOA1nIDO90ihfPPJkpM6JQRSdwZdLN6aQ/values:batchGet?ranges=${value[1]}`, { 'headers': { 'Authorization': 'Bearer ' + token }}
         ).then(res => {
           if (index == 0) {
             vm.trips = res.data.valueRanges[0].values;
+            let trips = vm.transpose(vm.trips);
+            trips.forEach((value, index, array) => {
+              let label = [];
+              let datas = [];
+
+              if (index == 0) label = value.slice(1, 13);
+              else datas = value.slice(1, 13);
+
+              vm.fillTripsData(index, label, datas);
+            });
           } else if (index == 1) {
-            vm.regions = res.data.valueRanges[0].values;
+            vm.regions  = res.data.valueRanges[0].values;
+            let regions = vm.transpose(vm.regions);
+            vm.fillRegionsData(0, regions[0].slice(1, 16), regions[1].slice(1, 16));
           } else if (index == 2) {
             vm.totals = res.data.valueRanges[0].values;
+            let totals = vm.transpose(vm.totals);
+            [0, 1, 2, 3, 4, 5].forEach((index) => {
+              let label = [];
+              let datas = [];
+              totals[index].forEach((value, idx, arr) => {
+              if (idx != 0 && idx != 11) {
+                if (index == 0) label.push(value);
+                else datas.push(value);
+              }
+              });
+              vm.fillTotalsData(index, label, datas);
+            });
           } else if (index == 3) {
             vm.movies = res.data.valueRanges[0].values;
+            vm.movies.forEach((value, index, arrary) => {
+              if (index != 0 && index != 11) {
+                vm.datalabel.push(value[0]);
+                vm.dataentry.push(value[1]);
+              }
+            });
+            vm.addData();
           } else if (index == 4) {
             vm.books = res.data.valueRanges[0].values;
           } else if (index == 5) {
@@ -192,12 +486,55 @@ export default {
       });
     });
   },
+  methods: {
+    createChart(chartId, chartData) {
+      const ctx = document.getElementById(chartId)
+      var myChart = new Chart(ctx, {
+        type: chartData.type,
+        data: chartData.data,
+        options: chartData.options,
+      });
+
+      return myChart;
+    },
+    addData () {
+      this.labels = this.datalabel;
+      this.dataset = this.dataentry;
+      this.datalabel = [];
+      this.dataentry = [];
+    },
+
+    transpose(a) {
+      return Object.keys(a[0]).map(function(c) {
+        return a.map(function(r) { return r[c]; });
+      });
+    },
+    fillRegionsData(idx, label, datas) {
+      globalRegionsChart.data.labels = label;
+      globalRegionsChart.data.datasets[0].data = datas;
+      globalRegionsChart.update();
+    },
+    fillTripsData (idx, label, datas) {
+      if (idx == 0) globalTripsChart.data.labels = label;
+      else globalTripsChart.data.datasets[idx-1].data = datas;
+      globalTripsChart.update();
+    },
+    fillTotalsData (idx, label, datas) {
+      if (idx == 0) globalTotalsChart.data.labels = label;
+      else globalTotalsChart.data.datasets[idx-1].data = datas;
+      globalTotalsChart.update();
+    }
+  },
   mounted() {
     axios.get("https://icanhazdadjoke.com/", { 'headers': { 'Accept': 'application/json' } }
     ).then(res => {
       this.joke = res.data.joke
       this.loading = false;
     });
+
+    globalRegionsChart = this.createChart('doughnutRegionsChart', this.regionsChartData);
+    globalTripsChart = this.createChart('lineTripsChart', this.tripsChartData);
+    globalTotalsChart = this.createChart('lineTotalsChart', this.totalsChartData);
   }
 }
 </script>
@@ -214,6 +551,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
 strong {
@@ -228,7 +566,7 @@ table {
     background: #f5f5f5;
     border-collapse: separate;
     box-shadow: inset 0 1px 0 #fff;
-    font-size: small;
+    font-size: 9px;
     line-height: 9px;
     font-family: "Hanna", Jeju Gothic, Nanum Gothic, Serif;
     margin: 2px auto;
