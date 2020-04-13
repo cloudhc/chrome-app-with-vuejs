@@ -434,7 +434,7 @@ table {
   background: #f5f5f5;
   border-collapse: separate;
   box-shadow: inset 0 1px 0 #fff;
-  font-size: 9px;
+  font-size: small;
   line-height: 9px;
   font-family: "Hanna", Jeju Gothic, Nanum Gothic, Serif;
   margin: 2px auto;
