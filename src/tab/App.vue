@@ -22,7 +22,7 @@
             <tbody id="list">
               <tr v-for="(dataes, index) in trips" v-if="index != 0">
                 <td v-for="(e, idx) in dataes">
-                  <span v-if="e >= 10 && idx != 0" style="color:red">{{ e }}</span>
+                  <span v-if="e >= 10 && idx != 0 && idx != 11" style="color:red">{{ e }}</span>
                   <span v-else>{{ e }}</span>
                 </td>
               </tr>
@@ -167,6 +167,7 @@ export default {
       regions: [],
       dataentry: [],
       datalabel: [],
+      months:  ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "SUM"],
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       dataset: [65, 59, 80, 81, 56, 55, 40]
     }
@@ -175,9 +176,9 @@ export default {
     let vm = this;
 
     chrome.identity.getAuthToken({interactive: true}, function(token) {
-      let ranges = [['매년월별', 'stats!M1:W14'],
+      let ranges = [['매년월별', 'stats!M1:X14'],
                     ['관광지별', 'stats!G1:H17'],
-                    ['주요활동', 'totals!L1:Q12'],
+                    ['주요활동', 'totals!L1:R12'],
                     ['영화', 'totals!A1:B12'],
                     ['독서', 'totals!C1:D12'],
                     ['공영', 'totals!E1:F12'],
@@ -198,8 +199,8 @@ export default {
               let label = [];
               let datas = [];
 
-              if (index == 0) label = value.slice(1, 13);
-              else datas = value.slice(1, 13);
+              if (index == 0) label = value.slice(1, value.length-1).map(month => vm.months[month-1]);
+              else datas = value.slice(1, value.length-1);
 
               vm.fillTripsData(index, label, datas);
             });
@@ -217,7 +218,7 @@ export default {
             globalTotalsChart = vm.createChart('lineTotalsChart', vm.makeLineChartData(totalsLabels));
 
             let totals = vm.transpose(vm.totals);
-            [0, 1, 2, 3, 4, 5].forEach((index) => {
+            [0, 1, 2, 3, 4, 5, 6].forEach((index) => {
               let label = [];
               let datas = [];
               totals[index].forEach((value, idx, arr) => {
@@ -336,7 +337,7 @@ export default {
               'rgba(0, 0, 0, 1)',
               'rgba(0, 0, 128, 1)',
               'rgba(0, 0, 255, 1)',
-              'srgba(0, 128, 0, 1)',
+              'rgba(0, 128, 0, 1)',
               'rgba(0, 128, 128, 1)',
               'rgba(0, 255, 0, 1)',
               'rgba(0, 255, 128, 1)',
@@ -369,6 +370,13 @@ export default {
       halfDoughnutChartData.options.circumference = 1 * Math.PI;
 
       return halfDoughnutChartData;
+    },
+    makePolarAreaChartData() {
+      let polarAreaChartData = this.makeDoughnutChartData();
+
+      polarAreaChartData.type = "polarArea";
+
+      return polarAreaChartData;
     },
     transpose(a) {
       return Object.keys(a[0]).map(function(c) {
