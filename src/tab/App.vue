@@ -176,12 +176,12 @@ export default {
       regions: [],
       dataentry: [],
       datalabel: [],
-      months:  ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "SUM"],
+      months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", "SUM"],
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       dataset: [65, 59, 80, 81, 56, 55, 40],
       labels_radar: [],
       dataset_radar: [],
-      radar_lists: [1, 2, 3, 4, 5]
+      radar_lists: [5, 6, 7, 8, 9]
     }
   },
   created() {
@@ -225,13 +225,18 @@ export default {
             let yearsLabels = totals[0].slice(1, totals[0].length-1);
             globalRadarTotalsChart = vm.createChart('radarTotalsChart', vm.makeRadarChartData(yearsLabels));
             vm.fillData(globalRadarTotalsChart, vm.totals.slice(0, vm.totals.length-1));
+
+            vm.totals.slice(0, vm.totals.length-1).forEach((row, index, array) => {
+              if (index == 0) vm.labels_radar = row.slice(1, row.length-1);
+              else vm.dataset_radar[index-1] = row.slice(1, row.length-1);
+            });
           } else if (index == 3) {
             vm.movies = res.data.valueRanges[0].values;
-            vm.movies.forEach((value, index, arrary) => {
-              if (index != 0 && index != 11) {
-                vm.datalabel.push(value[0]);
-                vm.dataentry.push(value[1]);
-              }
+            let movies = vm.transpose(vm.movies);
+
+            movies.forEach((row, index, arrary) => {
+              if (index == 0) vm.datalabel = row.slice(1, row.length-1);
+              else vm.dataentry = row.slice(1, row.length-1);
             });
             vm.addData();
           } else if (index == 4) {
@@ -259,6 +264,23 @@ export default {
       });
 
       return myChart;
+    },
+    addData() {
+      this.labels = this.datalabel;
+      this.dataset = this.dataentry;
+      this.datalabel = [];
+      this.dataentry = [];
+    },
+    fillData (graph, datas) {
+      datas.forEach((row, index, array) => {
+        if (index == 0) {
+          graph.data.labels = row.slice(1, row.length-1);
+        } else {
+          graph.data.datasets[index-1].label = row[0];
+          graph.data.datasets[index-1].data = row.slice(1, row.length-1);
+        }
+      });
+      graph.update();
     },
     makeLineChartData(labels) {
       let datasets = [];
@@ -352,6 +374,7 @@ export default {
 
         datasets.push(dataset);
       });
+
       let doughnutChartData = {
         type: 'doughnut',
         data: {
@@ -420,23 +443,6 @@ export default {
       return Object.keys(a[0]).map(function(c) {
         return a.map(function(r) { return r[c]; });
       });
-    },
-    addData() {
-      this.labels = this.datalabel;
-      this.dataset = this.dataentry;
-      this.datalabel = [];
-      this.dataentry = [];
-    },
-    fillData (graph, datas) {
-      datas.forEach((row, index, array) => {
-        if (index == 0) {
-          graph.data.labels = row.slice(1, row.length-1);
-        } else {
-          graph.data.datasets[index-1].label = row[0];
-          graph.data.datasets[index-1].data = row.slice(1, row.length-1);
-        }
-      });
-      graph.update();
     }
   },
   mounted() {
